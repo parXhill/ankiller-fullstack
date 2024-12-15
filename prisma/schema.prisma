@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AnkillerTestData {
+  id                     Int     @id @default(autoincrement())
+  keyword                String  @db.VarChar(255)
+  exemplar               String? @db.VarChar(255)
+  keywordtranslation     String? @db.VarChar(255)
+  exemplartranslation    String? @db.VarChar(255)
+  targetlanguage         String? @db.VarChar(255)
+  lemmas                 String? @db.VarChar(255)
+  dependencies           String? @db.VarChar(255)
+  aigenerated            Boolean
+  aimodel                String? @db.VarChar(255)
+  languagelevel          String? @db.VarChar(255)
+  numberofkeywords       Int?
+  exemplarsentencelength Int?
+  keywordsignificance    String? @db.VarChar(255)
+  keywordgrammarformat   String? @db.VarChar(255)
+  partofspeech           String? @db.VarChar(255)
+
+    @@map("ankillertestdata") // Keeps the database table name lowercase
+
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  country   String
+  decks     Deck[]   // Relation to Decks
+}
+
+model Deck {
+  id        Int      @id @default(autoincrement())
+  title     String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id]) // Relation to Users
+  cards     Card[]   // Relation to Cards
+}
+
+model Card {
+  id                     Int      @id @default(autoincrement())
+  deckId                 Int
+  deck                   Deck     @relation(fields: [deckId], references: [id]) // Relation to Decks
+  keyword                String   @db.VarChar(255)
+  exemplar               String?  @db.VarChar(255)
+  keywordTranslation     String?  @db.VarChar(255)
+  exemplarTranslation    String?  @db.VarChar(255)
+  targetLanguage         String?  @db.VarChar(255)
+  lemmas                 String?  @db.VarChar(255)
+  dependencies           String?  @db.VarChar(255)
+  aiGenerated            Boolean
+  aiModel                String?  @db.VarChar(255)
+  languageLevel          String?  @db.VarChar(255)
+  numberOfKeywords       Int?
+  exemplarSentenceLength Int?
+  keywordSignificance    String?  @db.VarChar(255)
+  keywordGrammarFormat   String?  @db.VarChar(255)
+  partOfSpeech           String?  @db.VarChar(255)
+}
