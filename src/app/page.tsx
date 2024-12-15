@@ -1,18 +1,22 @@
-import type { AnkillerTestData } from '@prisma/client'; // Import the type from Prisma
-import { addItem } from '@/app/lib/prisma-test'; // Import the function to add an item
-import { getFullDatabase as getFullDatabaseAction } from './lib/actions';
-import { AnyARecord } from 'dns';
+'use server';
+
 import DataCard from './DataCard';
 import AppCard from './lib/AppCard';
+import AppCardSkeleton from './ui/skeletons/AppCardSkeleton';
+import { Suspense } from 'react';
+import { getCardsFromUsersDeck } from "./lib/actions";
+import { Card } from '@prisma/client';
 
-export default function Home() {
-  // Use Prisma-generated type for state
+export default async function Home() {
+  const cards: any = await getCardsFromUsersDeck("alex", "french");
 
 
   return (
     <div>
-<DataCard/>
-<AppCard/>
- </div>
+      {/* <DataCard /> */}
+      <Suspense fallback={<AppCardSkeleton />}>
+        <AppCard cards={cards} />
+      </Suspense>
+    </div>
   );
 }

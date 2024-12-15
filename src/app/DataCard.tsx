@@ -8,13 +8,12 @@ export default function DataCard() {
 
   const [data, setData] = useState({});
 
-  async function fetchData() {
-    const data = await getCardsFromUsersDeck("alex", "french");
-    console.log('data in client', data); // Use the fetched data here
+    function fetchData() {
+    const data = getCardsFromUsersDeck("alex", "french");
     setData(data);  }
 
-  async function handleDeleteByKeyword() {
-    deleteDataByKeyword('lemon');
+  function handleDeleteByKeyword() {
+    deleteDataByKeyword('hello');
   }
 
   const stringData = JSON.stringify(data);

@@ -2,28 +2,13 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
+import { Card }from '@/app/lib/AppCard';
 
-// export interface Card {
-//   keyword: string;
-//   deckId?: number;
-//   deck?: Deck;
-//   exemplar?: string;
-//   keywordTranslation?: string;
-//   exemplarTranslation?: string;
-//   targetLanguage?: string;
-//   lemmas?: string;
-//   dependencies?: string;
-//   aiGenerated: boolean;
-//   aiModel?: string;
-//   languageLevel?: string;
-//   numberOfKeywords?: number;
-//   exemplarSentenceLength?: number;
-//   keywordSignificance?: string;
-//   keywordGrammarFormat?: string;
-//   partOfSpeech?: string;
-// }
 
-export async function getCardsFromUsersDeck(name: string, title: string) {
+export async function getCardsFromUsersDeck(
+  name: string,
+  title: string
+): Promise<Card[]> {
   try {
     const data = await prisma.card.findMany({
       where: {
@@ -34,26 +19,23 @@ export async function getCardsFromUsersDeck(name: string, title: string) {
           },
         },
       },
-      include: {
-        deck: true, 
-      },
     });
 
-    console.log(`Filtered cards for ${name}'s ${title} deck:`, data);
     return data;
   } catch (error) {
-    console.error("Error fetching cards for Lara's French deck:", error);
-    return NextResponse.json({ error: "Failed to fetch data" }, { status: 500 });
+    console.error("Error fetching cards:", error);
+    throw new Error("Failed to fetch data");
   }
 }
+
 export async function deleteDataByKeyword(keyword: string) {
   try {
-    const data = await prisma.ankillerTestData.deleteMany({
+    const data = await prisma.card.deleteMany({
       where: {
-        keyword: keyword,
+        deckId: 1,
       },
     });
-    console.log('data in server:', data);
+    //console.log('data in server:', data);
     return data;
   } catch (error) {
     console.error('Error fetching data:', error);
