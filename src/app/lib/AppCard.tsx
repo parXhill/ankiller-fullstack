@@ -1,39 +1,17 @@
 'use client';
 
 import React, { useState } from "react";
-import { createCard } from "./actions";
-import { create } from "domain";
+import { getUserNameFromCard, getDecksFromUserId } from "./actions";
+import { Card } from "@prisma/client";
 
-
-// Define the Card type based on the schema
-export interface Card {
-  id: number;
-  deckId: number;
-  deck?: { id: number; title: string }; // Relation is optional unless included in the query
-  keyword: string;
-  exemplar: string | null;
-  keywordTranslation: string | null;
-  exemplarTranslation: string | null;
-  targetLanguage: string | null;
-  lemmas: string | null;
-  dependencies: string | null;
-  aiGenerated: boolean;
-  aiModel: string | null;
-  languageLevel: string | null;
-  numberOfKeywords: number | null;
-  exemplarSentenceLength: number | null;
-  keywordSignificance: string | null;
-  keywordGrammarFormat: string | null;
-  partOfSpeech: string | null;
-}
 
 export default function AppCard({cards}: {cards: Card[]}) {
 
   const [card, setCard] = useState<Card | null>(null);
+  const [userName, setUserName] = useState<string | null>(null); // User name to display
 
   const handleClick = (cardItem: any) => {
-    setCard(cardItem);
-    createCard(cardItem);
+    const name = getUserNameFromCard(cardItem.id);    
   }
     
 
@@ -82,6 +60,7 @@ export default function AppCard({cards}: {cards: Card[]}) {
           </pre>
         </div>
       )}
+      <button onClick={() => getDecksFromUserId(2)}>Get Decks</button>
     </div>
   );
 };

@@ -14,6 +14,7 @@ export default function DataCard() {
 
   function handleDeleteByKeyword() {
     deleteDataByKeyword('hello');
+    
   }
 
   const stringData = JSON.stringify(data);

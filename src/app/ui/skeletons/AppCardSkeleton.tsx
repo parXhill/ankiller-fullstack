@@ -1,4 +1,4 @@
-import { Card } from '@/app/lib/AppCard';
+import { Card } from '@prisma/client';
 
 export default function AppCardSkeleton(){
 
@@ -6,7 +6,6 @@ export default function AppCardSkeleton(){
     {
       id: 1,
       deckId: 1,
-      deck: { id: 1, title: "french" },
       keyword: "Keyword1",
       exemplar: "Exemplar1",
       keywordTranslation: "Translation1",
@@ -26,7 +25,6 @@ export default function AppCardSkeleton(){
     {
       id: 2,
       deckId: 1,
-      deck: { id: 1, title: "french" },
       keyword: "Keyword2",
       exemplar: "Exemplar2",
       keywordTranslation: "Translation2",
@@ -46,7 +44,6 @@ export default function AppCardSkeleton(){
     {
       id: 3,
       deckId: 1,
-      deck: { id: 1, title: "french" },
       keyword: "Keyword3",
       exemplar: "Exemplar3",
       keywordTranslation: "Translation3",
@@ -92,7 +89,6 @@ export default function AppCardSkeleton(){
                 }`}
               >
                 <td className="p-4">{cardItem.id}</td>
-                <td className="p-4">{cardItem.deck?.title}</td>
                 <td className="p-4">{cardItem.keyword}</td>
                 <td className="p-4">{cardItem.exemplar}</td>
                 <td className="p-4">{cardItem.keywordTranslation}</td>

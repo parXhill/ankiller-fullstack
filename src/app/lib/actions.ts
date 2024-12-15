@@ -2,7 +2,28 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
-import { Card }from '@/app/lib/AppCard';
+import { Card, User, Deck }from '@prisma/client';
+
+
+
+export async function getDecksFromUserId(
+  userId: number
+): Promise<Deck[]> {
+  try {
+    const data = await prisma.deck.findMany({
+      where: {
+          userId: userId
+        },
+    });
+    console.log('deck data:', data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching cards:", error);
+    throw new Error("Failed to fetch data");
+  }
+}
+
+
 
 
 export async function getCardsFromUsersDeck(
@@ -73,23 +94,35 @@ export async function createCard(cardItem: any) {
     console.log("Error creating entry:", error);
   }};
 
-export async function createUser() {
+
+
+export async function createUser(userName: string) {
   // Add a new user
+
+try {
   const user = await prisma.user.create({
     data: {
-      name: 'Alice',
+      name: userName,
       country: 'USA',
     },
   });
 
+  console.log('User created successfully:', user);
+  return user;
+
+} catch (error) {
+  console.error('Error creating user:', error);
+  throw new Error('Failed to create user');
+}
 };
 
-export async function createDeck(userId: number) {
+
+export async function createDeck(userId: number, deckTitle: string) {
   
   // Add a deck for the user
   const deck = await prisma.deck.create({
     data: {
-      title: 'Spanish Flashcards',
+      title: deckTitle,
       userId: userId, // Associate deck with the user
     },
   });
@@ -97,3 +130,25 @@ export async function createDeck(userId: number) {
   console.log('User and Deck created:', userId, deck);
 
 };
+
+
+//test to find username from card
+
+export async function getUserNameFromCard(cardId: number): Promise<string | null> {
+  const card = await prisma.card.findUnique({
+    where: {
+      id: cardId, // Use the card ID to look up the card
+    },
+    include: {
+      deck: {
+        include: {
+          user: true, // Include the associated user of the deck
+        },
+      },
+    },
+  });
+
+  // If card or associated user is not found, return null
+  console.log('card:', card?.deck.user.name);
+  return card?.deck?.user?.name || null;
+}
