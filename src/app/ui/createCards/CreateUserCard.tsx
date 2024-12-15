@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function CreateUserCard({ createUser }: { createUser: (name: string) => void }) {
+export default function CreateUserCard({ createUser }: { createUser: (name: string) => void}) {
   const [name, setName] = useState(''); // State to track the user name input
 
   const handleCreateUser = () => {

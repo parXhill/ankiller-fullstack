@@ -152,3 +152,13 @@ export async function getUserNameFromCard(cardId: number): Promise<string | null
   console.log('card:', card?.deck.user.name);
   return card?.deck?.user?.name || null;
 }
+
+export async function getAllUsers(): Promise<User[]> {
+  try {
+    const data = await prisma.user.findMany();
+    return data;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw new Error('Failed to fetch data');
+  }
+}
