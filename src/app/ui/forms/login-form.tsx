@@ -1,15 +1,15 @@
-'use client'
 
-export default function LoginForm(){
-    return (
-        <div>
-        <h1>Login</h1>
-        <form>
-            <input type="text" placeholder="username"/>
-            <input type="password" placeholder="password"/>
-            <button type="submit">Login</button>
-        </form>
-        </div>
-    )
-
-}
+import { signIn } from "auth"
+ 
+export default function SignIn() {
+  return (
+    <form
+      action={async () => {
+        "use server"
+        await signIn("google")
+      }}
+    >
+      <button type="submit">Signin with Google</button>
+    </form>
+  )
+} 

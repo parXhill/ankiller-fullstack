@@ -1,10 +1,10 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
 }
 
 model AnkillerTestData {
@@ -25,29 +25,38 @@ model AnkillerTestData {
   keywordgrammarformat   String? @db.VarChar(255)
   partofspeech           String? @db.VarChar(255)
 
-    @@map("ankillertestdata") // Keeps the database table name lowercase
-
+  @@map("ankillertestdata") // Keeps the database table name lowercase
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  country   String
-  decks     Deck[]   // Relation to Decks
+  id            String          @id @default(cuid())
+  name          String?
+  email         String?          @unique
+  emailVerified DateTime?
+  image         String?
+  country       String?         // From your original schema
+  accounts      Account[]
+  sessions      Session[]
+  decks         Deck[]          // Relation to Decks
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
 model Deck {
   id        Int      @id @default(autoincrement())
   title     String
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id]) // Relation to Users
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to Users
   cards     Card[]   // Relation to Cards
 }
 
 model Card {
   id                     Int      @id @default(autoincrement())
   deckId                 Int
-  deck                   Deck     @relation(fields: [deckId], references: [id]) // Relation to Decks
+  deck                   Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade) // Relation to Decks
   keyword                String   @db.VarChar(255)
   exemplar               String?  @db.VarChar(255)
   keywordTranslation     String?  @db.VarChar(255)
@@ -63,4 +72,59 @@ model Card {
   keywordSignificance    String?  @db.VarChar(255)
   keywordGrammarFormat   String?  @db.VarChar(255)
   partOfSpeech           String?  @db.VarChar(255)
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
 }
