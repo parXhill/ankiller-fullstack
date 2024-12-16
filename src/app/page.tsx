@@ -1,6 +1,5 @@
 'use server';
 
-import SignIn from './ui/forms/login-form';
 import AppCard from './lib/AppCard';
 import AppCardSkeleton from './ui/skeletons/AppCardSkeleton';
 import { Suspense } from 'react';
@@ -19,7 +18,6 @@ export default async function Home() {
 
   return (
     <div>
-      <SignIn />
       <CreateUserCard createUser={createUser} />
 
       <Suspense fallback={<AppCardSkeleton/>}>
