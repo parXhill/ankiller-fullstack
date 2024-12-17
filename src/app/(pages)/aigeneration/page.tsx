@@ -7,7 +7,7 @@ import { sampleTexts } from '@/app/assets/sampleTexts';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from  '@/store/store';
 import { ParsedResponse } from '@/store/promptSlice';
-import { createCard, getUserIdFromEmail } from '@/app/lib/actions';
+import { createCards, getUserIdFromEmail } from '@/app/lib/actions';
 
 import { Card } from '@prisma/client'
 import { CardToSend } from '@/store/promptSlice';
@@ -59,11 +59,7 @@ const selectedDeck = useSelector((state: RootState) => state.deck.selectedDeck);
 const selectedCards = useSelector((state: RootState) => state.deck.selectedCards);
 
 function handleSendCards(){
-  console.log('cards to send', cardToSend)
-  for (let card of selectedCards as CardToSend[]) {
-    createCard(card);
-    console.log('created card', card)
-  }
+  createCards(selectedCards);
   dispatch(clearSelectedCards());
 }
 
@@ -103,7 +99,7 @@ function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
     dispatch(toggleSelectedCards(parsedResponse.keywords[parseInt(index)]));
 }
 
-
+console.log('selectedCards', selectedCards)
 
 
 const significanceSettings = {

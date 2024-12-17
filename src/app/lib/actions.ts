@@ -92,17 +92,18 @@ export async function deleteDataByKeyword(keyword: string) {
 //     console.log("Error creating entry:", error);
 //   }};
 
-export async function createCard(cardItem: CardToSend) {
-  try {
-    const entry = await prisma.card.create({
-      data: cardItem,
-    });
-
-    console.log("Entry created on the server:", entry);
-    return entry;
-  } catch (error) {
-    console.log("Error creating entry:", error);
-    throw error; // Optional: rethrow to handle the error upstream
+export async function createCards(cards: CardToSend[]) {
+  console.log("Cards to process:", cards);
+  for (let cardItem of cards) {
+    try {
+      const entry = await prisma.card.create({
+        data: cardItem,
+      });
+      console.log("Entry created on the server:", entry);
+    } catch (error) {
+      console.error("Error creating entry for card:", cardItem, error);
+      // Optional: continue to next card without breaking the loop
+    }
   }
 }
 

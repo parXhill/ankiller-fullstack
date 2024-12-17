@@ -22,11 +22,12 @@ const deckSlice = createSlice({
     },
     toggleSelectedCards: (state, action) => {
       // Check if card exists
-      const exists = state.selectedCards.some(card => card.id === action.payload.id);
+
+      const exists = state.selectedCards.some(card => card.keyword === action.payload.keyword);
   
       if (exists) {
           // Remove card if it already exists
-          state.selectedCards = state.selectedCards.filter(card => card.id !== action.payload.id);
+          state.selectedCards = state.selectedCards.filter(card => card.keyword !== action.payload.keyword);
       } else {
           // Add the card if it does not exist
           state.selectedCards.push(action.payload);
