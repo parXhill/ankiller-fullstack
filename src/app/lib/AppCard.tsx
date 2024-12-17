@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from "react";
-import { getUserNameFromCard, getDecksFromUserId } from "./actions";
+import { getUserNameFromCard } from "./actions";
 import { Card } from "@prisma/client";
 
 
@@ -60,7 +60,6 @@ export default function AppCard({cards}: {cards: Card[]}) {
           </pre>
         </div>
       )}
-      <button onClick={() => getDecksFromUserId(2)}>Get Decks</button>
     </div>
   );
 };

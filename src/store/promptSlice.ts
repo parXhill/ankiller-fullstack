@@ -1,29 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
+import { Card } from '@prisma/client';
+ 
 export interface ParsedResponse {
-  keywords: Array<{
-    keyword: string;
-    translation: string;
-    exemplar_sentence: string;
-    translation_sentence: string;
-  }>;
+  keywords: CardToSend[];
 }
 
-export interface CardToSend {
-  keyword: string;
-  exemplar: string;
-  keywordTranslation: string;
-  exemplarTranslation: string;
-  targetLanguage: string;
-  aiGenerated: number; // Using number for boolean (SQLite compatibility)
-  aiModel: string;
-  languageLevel: string;
-  numberOfKeywords: number;
-  exemplarSentenceLength: number;
-  keywordSignificance: string;
-  keywordGrammarFormat: string;
-  partOfSpeech: string;
-}
+export type CardToSend = Omit<Card, "id">
+
 
 export interface PromptState {
   inputMessage: string;
@@ -58,12 +41,16 @@ const initialState: PromptState = {
   keywordGrammarFormat: "Words must be converted to their standard uninflected grammatical form.", // Default value
   partOfSpeech: "Extract any part of speech as words.", // Default value
   cardToSend: {
+    deckId: 0,
+    userId: "",
+    lemmas: "",
+    dependencies: "",
     keyword: "",
     exemplar: "",
     keywordTranslation: "",
     exemplarTranslation: "",
     targetLanguage: "",
-    aiGenerated: 1, // Number for boolean compatibility
+    aiGenerated: true, // Number for boolean compatibility
     aiModel: "",
     languageLevel: "",
     numberOfKeywords: 5,

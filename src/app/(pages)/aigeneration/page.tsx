@@ -7,7 +7,14 @@ import { sampleTexts } from '@/app/assets/sampleTexts';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from  '@/store/store';
 import { ParsedResponse } from '@/store/promptSlice';
-import { createCard } from '@/app/lib/actions';
+import { createCard, getUserIdFromEmail } from '@/app/lib/actions';
+
+import { Card } from '@prisma/client'
+import { CardToSend } from '@/store/promptSlice';
+
+import { useEffect, useState } from 'react';
+
+import { useSession } from 'next-auth/react';
 
 
 
@@ -31,6 +38,25 @@ export default function Home() {
 
 
 const dispatch = useDispatch<AppDispatch>();
+const session = useSession();
+console.log('Session', session);
+
+const [userId, setUserId] = useState('none');
+
+
+
+useEffect(() => {
+  const email = session.data?.user?.email ?? 'None';
+
+  // Handle the async function safely
+  getUserIdFromEmail(email)
+      .then((result) => setUserId(result || 'none'))
+      .catch(() => setUserId('none'));
+}, [session.data?.user?.email]);
+
+
+const selectedDeck = useSelector((state: RootState) => state.deck.selectedDeck);
+console.log('selected deck', selectedDeck)
 
 
 
@@ -56,7 +82,7 @@ const partOfSpeech = useSelector((state: RootState) => state.prompt.partOfSpeech
 const numberOfKeywords = useSelector((state: RootState) => state.prompt.numberOfKeywords);
 const cardToSend = useSelector((state: RootState) => state.prompt.cardToSend);
 
-console.log(cardToSend)
+console.log('parsed response', parsedResponse)
 
 
 
@@ -156,9 +182,9 @@ Your task is to extract key words from a given text, to formulate exemplar sente
   "keywords": [
     {
       "keyword": "{Insert the extracted word here}",
-      "translation": "{Provide the most common translation here}",
-      "exemplar_sentence": "{Generate a simple exemplar sentence of ${exemplarSentenceLength} words or less using the word that showcases the most standard use of the word in the target language}",
-      "translation_sentence": "{Translate the exemplar sentence into English here}"
+      "keywordTranslation": "{Provide the most common translation here}",
+      "exemplar": "{Generate a simple exemplar sentence of ${exemplarSentenceLength} words or less using the word that showcases the most standard use of the word in the target language}",
+      "exemplarTranslation": "{Translate the exemplar sentence into English here}"
     },
     ...
   ]
@@ -171,6 +197,7 @@ Given text: ${inputMessage}`;
 
   async function getGroqChatCompletion(): Promise<void> {
     dispatch(setIsLoading(true));
+    
     try {
       const response = await groq.chat.completions.create({
         messages: [{ role: 'system', content: fullMessage }], 
@@ -185,15 +212,16 @@ Given text: ${inputMessage}`;
       const jsonObject: ParsedResponse = JSON.parse(jsonString);
       console.log('Parsed Response:', jsonObject);
 
-      dispatch(setParsedResponse(jsonObject));
+      let generatedCardsArray: CardToSend[] = [];
 
       for (const keyword of jsonObject.keywords) {
-        const cardTemplate = {
-            deck: { id: 1 },
+        const cardTemplate: CardToSend = {
+            userId: userId,
+            deckId: selectedDeck.id ?? 0,
             keyword: keyword.keyword,
-            exemplar: keyword.exemplar_sentence,
-            keywordTranslation: keyword.translation,
-            exemplarTranslation: keyword.translation_sentence,
+            exemplar: keyword.exemplar,
+            keywordTranslation: keyword.keywordTranslation,
+            exemplarTranslation: keyword.exemplarTranslation,
             targetLanguage: targetLanguage,
             lemmas: 'none',
             dependencies: 'none',
@@ -206,11 +234,15 @@ Given text: ${inputMessage}`;
             keywordGrammarFormat: keywordGrammarFormat,
             partOfSpeech: partOfSpeech
         };
-
-        console.log('card to send', cardTemplate);
-        createCard(cardTemplate);
-
+        generatedCardsArray.push(cardTemplate)
       }
+
+      const parsedResponse: ParsedResponse = {
+        keywords: generatedCardsArray,
+    };
+      dispatch(setParsedResponse(parsedResponse));
+    
+      // createCard(cardTemplate);
 
     } catch (error) {
       console.error('Error fetching Groq chat completion:', error);
@@ -420,9 +452,9 @@ Given text: ${inputMessage}`;
                 {parsedResponse.keywords.map((keyword, index) => (
                   <tr key={index} className="hover:bg-gray-100">
                     <td className="border border-gray-300 px-4 py-2 font-semibold">{keyword.keyword}</td>
-                    <td className="border border-gray-300 px-4 py-2">{keyword.translation}</td>
-                    <td className="border border-gray-300 px-4 py-2 font-semibold">{keyword.exemplar_sentence}</td>
-                    <td className="border border-gray-300 px-4 py-2">{keyword.translation_sentence}</td>
+                    <td className="border border-gray-300 px-4 py-2">{keyword.keywordTranslation}</td>
+                    <td className="border border-gray-300 px-4 py-2 font-semibold">{keyword.exemplar}</td>
+                    <td className="border border-gray-300 px-4 py-2">{keyword.exemplarTranslation}</td>
                     <td className="border border-gray-300 px-4 py-2 text-center">
                       <input type="checkbox" />
                     </td>

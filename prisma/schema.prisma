@@ -31,47 +31,50 @@ model AnkillerTestData {
 model User {
   id            String          @id @default(cuid())
   name          String?
-  email         String?          @unique
+  email         String?         @unique
   emailVerified DateTime?
   image         String?
-  country       String?         // From your original schema
+  country       String?
   accounts      Account[]
   sessions      Session[]
-  decks         Deck[]          // Relation to Decks
-  // Optional for WebAuthn support
+  decks         Deck[]
+  cards         Card[] // Reverse relation to Cards
   Authenticator Authenticator[]
 
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 }
 
 model Deck {
-  id        Int      @id @default(autoincrement())
-  title     String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to Users
-  cards     Card[]   // Relation to Cards
+  id     Int    @id @default(autoincrement())
+  title  String
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade) // Relation to Users
+  cards  Card[] // Relation to Cards
 }
 
 model Card {
-  id                     Int      @id @default(autoincrement())
-  deckId                 Int
-  deck                   Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade) // Relation to Decks
-  keyword                String   @db.VarChar(255)
-  exemplar               String?  @db.VarChar(255)
-  keywordTranslation     String?  @db.VarChar(255)
-  exemplarTranslation    String?  @db.VarChar(255)
-  targetLanguage         String?  @db.VarChar(255)
-  lemmas                 String?  @db.VarChar(255)
-  dependencies           String?  @db.VarChar(255)
+  id     Int  @id @default(autoincrement())
+  deckId Int
+  deck   Deck @relation(fields: [deckId], references: [id], onDelete: Cascade) // Relation to Decks
+
+  userId                 String  @default("None")
+  user                   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keyword                String  @db.VarChar(255)
+  exemplar               String? @db.VarChar(255)
+  keywordTranslation     String? @db.VarChar(255)
+  exemplarTranslation    String? @db.VarChar(255)
+  targetLanguage         String? @db.VarChar(255)
+  lemmas                 String? @db.VarChar(255)
+  dependencies           String? @db.VarChar(255)
   aiGenerated            Boolean
-  aiModel                String?  @db.VarChar(255)
-  languageLevel          String?  @db.VarChar(255)
+  aiModel                String? @db.VarChar(255)
+  languageLevel          String? @db.VarChar(255)
   numberOfKeywords       Int?
   exemplarSentenceLength Int?
-  keywordSignificance    String?  @db.VarChar(255)
-  keywordGrammarFormat   String?  @db.VarChar(255)
-  partOfSpeech           String?  @db.VarChar(255)
+  keywordSignificance    String? @db.VarChar(255)
+  keywordGrammarFormat   String? @db.VarChar(255)
+  partOfSpeech           String? @db.VarChar(255)
 }
 
 model Account {

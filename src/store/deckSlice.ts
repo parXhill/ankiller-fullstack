@@ -4,7 +4,7 @@ import { dummyDecks } from '@/app/assets/deckDummyData';
 const deckSlice = createSlice({
   name: 'deck',
   initialState: {
-    selectedDeck: null,
+    selectedDeck: {id: 0},
     importedDeck: null,
     dummyDecks: dummyDecks,
   },

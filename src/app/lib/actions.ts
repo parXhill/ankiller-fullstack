@@ -2,12 +2,11 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
-import { Card, User, Deck }from '@prisma/client';
-
+import { Card, Deck, User } from '@prisma/client';
 
 
 export async function getDecksFromUserId(
-  userId: number
+  userId: string
 ): Promise<Deck[]> {
   try {
     const data = await prisma.deck.findMany({
@@ -22,8 +21,6 @@ export async function getDecksFromUserId(
     throw new Error("Failed to fetch data");
   }
 }
-
-
 
 
 export async function getCardsFromUsersDeck(
@@ -117,13 +114,13 @@ try {
 };
 
 
-export async function createDeck(userId: number, deckTitle: string) {
+export async function createDeck(userId: string, deckTitle: string) {
   
   // Add a deck for the user
   const deck = await prisma.deck.create({
     data: {
       title: deckTitle,
-      userId: userId, // Associate deck with the user
+      userId: userId,
     },
   });
 
@@ -161,4 +158,14 @@ export async function getAllUsers(): Promise<User[]> {
     console.error('Error fetching users:', error);
     throw new Error('Failed to fetch data');
   }
+}
+
+export async function getUserIdFromEmail(email: string): Promise<string | null> {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  return user?.id || null;
 }

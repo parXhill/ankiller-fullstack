@@ -2,6 +2,7 @@
 
 import React, { use } from 'react';
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
 
 // Define the Deck and Card interfaces
 interface Card {
@@ -47,7 +48,7 @@ export default function EditorPage() {
               <th className="border border-gray-300 px-4 py-2 text-left">Exemplar Translation</th>
             </tr>
           </thead>
-          <tbody>
+          {/* <tbody>
             {selectedDeck.cards.map((card) => (
               <tr key={card.id} className="even:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2 text-center">{card.id}</td>
@@ -57,9 +58,11 @@ export default function EditorPage() {
                 <td className="border border-gray-300 px-4 py-2">{card.exemplarTranslation}</td>
               </tr>
             ))}
-          </tbody>
+          </tbody> */}
         </table>
       </div>
+      <Link href="/aigeneration">Generate AI Cards</Link>
+
     </div>
     );
   
