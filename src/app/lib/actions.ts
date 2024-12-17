@@ -2,7 +2,8 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
-import { Card, Deck, User } from '@prisma/client';
+import { Card, Deck, User, Prisma } from '@prisma/client';
+import { CardToSend } from '@/store/promptSlice';
 
 
 export async function getDecksFromUserId(
@@ -61,35 +62,49 @@ export async function deleteDataByKeyword(keyword: string) {
   }
 }
 
-export async function createCard(cardItem: any) {
+// export async function createCard(cardItem: Card) {
+//   try {
+//     // Adjust the cardItem structure to match Prisma's expectations
+//     const entry = await prisma.card.create({
+//       data: {
+//         deckId: cardItem.deckId, // Use the deck's id
+//         keyword: cardItem.keyword,
+//         exemplar: cardItem.exemplar,
+//         keywordTranslation: cardItem.keywordTranslation,
+//         exemplarTranslation: cardItem.exemplarTranslation,
+//         targetLanguage: cardItem.targetLanguage,
+//         lemmas: cardItem.lemmas,
+//         dependencies: cardItem.dependencies,
+//         aiGenerated: cardItem.aiGenerated,
+//         aiModel: cardItem.aiModel,
+//         languageLevel: cardItem.languageLevel,
+//         numberOfKeywords: cardItem.numberOfKeywords,
+//         exemplarSentenceLength: cardItem.exemplarSentenceLength,
+//         keywordSignificance: cardItem.keywordSignificance,
+//         keywordGrammarFormat: cardItem.keywordGrammarFormat,
+//         partOfSpeech: cardItem.partOfSpeech,
+//       },
+//     });
+
+//     console.log("Entry created on the server:", entry);
+//     return entry;
+//   } catch (error) {
+//     console.log("Error creating entry:", error);
+//   }};
+
+export async function createCard(cardItem: CardToSend) {
   try {
-    // Adjust the cardItem structure to match Prisma's expectations
     const entry = await prisma.card.create({
-      data: {
-        deckId: cardItem.deck.id, // Use the deck's id
-        keyword: cardItem.keyword,
-        exemplar: cardItem.exemplar,
-        keywordTranslation: cardItem.keywordTranslation,
-        exemplarTranslation: cardItem.exemplarTranslation,
-        targetLanguage: cardItem.targetLanguage,
-        lemmas: cardItem.lemmas,
-        dependencies: cardItem.dependencies,
-        aiGenerated: cardItem.aiGenerated,
-        aiModel: cardItem.aiModel,
-        languageLevel: cardItem.languageLevel,
-        numberOfKeywords: cardItem.numberOfKeywords,
-        exemplarSentenceLength: cardItem.exemplarSentenceLength,
-        keywordSignificance: cardItem.keywordSignificance,
-        keywordGrammarFormat: cardItem.keywordGrammarFormat,
-        partOfSpeech: cardItem.partOfSpeech,
-      },
+      data: cardItem,
     });
 
     console.log("Entry created on the server:", entry);
     return entry;
   } catch (error) {
     console.log("Error creating entry:", error);
-  }};
+    throw error; // Optional: rethrow to handle the error upstream
+  }
+}
 
 
 

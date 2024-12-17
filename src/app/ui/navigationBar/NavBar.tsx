@@ -11,11 +11,9 @@ export default function NavigationBar(
 
   const { data: session } = useSession()
 
-  console.log('session object', session);
 
   // If session is null or undefined
   if (!session) {
-    console.log("Session is null or undefined:", session);
     return (
       <nav className="bg-gray-800 text-white h-20 w-full flex items-center px-8">
         <div className="flex-1 text-xl font-bold">Ankiller</div>
@@ -48,7 +46,6 @@ export default function NavigationBar(
   }
 
   // Default case for logged-in user
-  console.log("Session on client:", session);
   return (
     <nav className="bg-gray-800 text-white h-20 w-full flex items-center px-8">
       <div className="flex-1 text-xl font-bold">Ankiller</div>

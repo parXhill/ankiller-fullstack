@@ -11,7 +11,7 @@ import { createCard, getUserIdFromEmail } from '@/app/lib/actions';
 
 import { Card } from '@prisma/client'
 import { CardToSend } from '@/store/promptSlice';
-
+import { toggleSelectedCards, clearSelectedCards } from '@/store/deckSlice';
 import { useEffect, useState } from 'react';
 
 import { useSession } from 'next-auth/react';
@@ -39,7 +39,6 @@ export default function Home() {
 
 const dispatch = useDispatch<AppDispatch>();
 const session = useSession();
-console.log('Session', session);
 
 const [userId, setUserId] = useState('none');
 
@@ -56,7 +55,18 @@ useEffect(() => {
 
 
 const selectedDeck = useSelector((state: RootState) => state.deck.selectedDeck);
-console.log('selected deck', selectedDeck)
+
+const selectedCards = useSelector((state: RootState) => state.deck.selectedCards);
+
+function handleSendCards(){
+  console.log('cards to send', cardToSend)
+  for (let card of selectedCards as CardToSend[]) {
+    createCard(card);
+    console.log('created card', card)
+  }
+  dispatch(clearSelectedCards());
+}
+
 
 
 
@@ -82,9 +92,16 @@ const partOfSpeech = useSelector((state: RootState) => state.prompt.partOfSpeech
 const numberOfKeywords = useSelector((state: RootState) => state.prompt.numberOfKeywords);
 const cardToSend = useSelector((state: RootState) => state.prompt.cardToSend);
 
-console.log('parsed response', parsedResponse)
 
+function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const index = e.target.value;
 
+    if (!parsedResponse || !parsedResponse.keywords) {
+        console.warn("parsedResponse is null or does not contain keywords.");
+        return; // Exit early if parsedResponse is null
+    }
+    dispatch(toggleSelectedCards(parsedResponse.keywords[parseInt(index)]));
+}
 
 
 
@@ -456,7 +473,10 @@ Given text: ${inputMessage}`;
                     <td className="border border-gray-300 px-4 py-2 font-semibold">{keyword.exemplar}</td>
                     <td className="border border-gray-300 px-4 py-2">{keyword.exemplarTranslation}</td>
                     <td className="border border-gray-300 px-4 py-2 text-center">
-                      <input type="checkbox" />
+                      <input 
+                        type="checkbox" 
+                        value={index}
+                        onChange={handleCheckboxChange}/>
                     </td>
                   </tr>
                 ))}
@@ -466,7 +486,7 @@ Given text: ${inputMessage}`;
         )}
       </div>
 
-      <button
-        className="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+      <button onClick={handleSendCards}
+        className="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Add to Deck</button>
     </div>
   );}
