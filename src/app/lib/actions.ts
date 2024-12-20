@@ -25,18 +25,14 @@ export async function getDecksFromUserId(
 
 
 export async function getCardsFromUsersDeck(
-  name: string,
-  title: string
+  deckId: number,
+  userId: string
 ): Promise<Card[]> {
   try {
     const data = await prisma.card.findMany({
       where: {
-        deck: {
-          title,
-          user: {
-            name,
-          },
-        },
+        deckId: deckId,
+        userId: userId,
       },
     });
 
@@ -47,11 +43,11 @@ export async function getCardsFromUsersDeck(
   }
 }
 
-export async function deleteDataByKeyword(keyword: string) {
+export async function deleteDataByKeyword(id: number) {
   try {
     const data = await prisma.card.deleteMany({
       where: {
-        deckId: 1,
+        id: id,
       },
     });
     //console.log('data in server:', data);

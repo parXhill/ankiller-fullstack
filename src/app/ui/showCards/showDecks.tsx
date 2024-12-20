@@ -14,7 +14,7 @@ export default function ShowDecks({ decks }: { decks: Deck[] }) {
             {decks.map((deck) => (
                 <Link
                     key={deck.id}
-                    href="/editor"
+                    href={`/${deck.id}/editor/`}
                     onClick={() => dispatch(setSelectedDeck(deck))} // Dispatch Redux action
                 >
                     <div className="bg-red-500 p-6 cursor-pointer hover:bg-violet-400">

@@ -22,9 +22,9 @@ export default async function Home() {
 
   const decks: Deck[] = await getDecksFromUserId(userId);
 
-  const cards: Card[] = await getCardsFromUsersDeck("alex", "french");
-
-
+  const cards: Card[] = await getCardsFromUsersDeck(1, userId);
+    
+  console.log('decks', decks)
 
   return (
     <div>
