@@ -4,6 +4,10 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
 import { Card, Deck } from '@prisma/client';
 import { CardToSend } from '@/store/promptSlice';
+import { auth } from 'auth';
+import { redirect } from 'next/navigation';
+
+
 
 
 // Get Functions
@@ -22,6 +26,14 @@ export async function getUserIdFromEmail(email: string): Promise<string | null> 
 export async function getDecksFromUserId(
   userId: string
 ): Promise<Deck[]> {
+
+  const session = await auth();
+
+  if (!session || !session.user) {
+     redirect('/login');}
+  
+  const user = session.user;
+ 
   try {
     const data = await prisma.deck.findMany({
       where: {
