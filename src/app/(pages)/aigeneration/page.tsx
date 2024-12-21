@@ -9,12 +9,13 @@ import { RootState, AppDispatch } from  '@/store/store';
 import { ParsedResponse } from '@/store/promptSlice';
 import { createCards, getUserIdFromEmail } from '@/app/lib/actions';
 
-import { Card } from '@prisma/client'
 import { CardToSend } from '@/store/promptSlice';
 import { toggleSelectedCards, clearSelectedCards } from '@/store/deckSlice';
 import { useEffect, useState } from 'react';
 
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { encodeId } from '@/app/lib/scrambleParameterId';
 
 
 
@@ -35,6 +36,8 @@ import { setInputMessage,
 
 
 export default function Home() {
+
+const router = useRouter();
 
 
 const dispatch = useDispatch<AppDispatch>();
@@ -61,6 +64,7 @@ const selectedCards = useSelector((state: RootState) => state.deck.selectedCards
 function handleSendCards(){
   createCards(selectedCards);
   dispatch(clearSelectedCards());
+  router.push(`/${encodeId(selectedDeck.id)}/editor/`);
 }
 
 

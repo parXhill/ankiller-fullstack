@@ -3,9 +3,11 @@
 import { Deck } from '@prisma/client';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import { setSelectedDeck } from '@/store/deckSlice';
+import { setSelectedDeck  } from '@/store/deckSlice';
+import { encodeId } from "@/app/lib/scrambleParameterId";
 
-export default function ShowDecks({ decks }: { decks: Deck[] }) {
+
+export default function ShowDecks({ decks }: { decks: Deck[]}) {
 
     const dispatch = useDispatch();
 
@@ -14,7 +16,7 @@ export default function ShowDecks({ decks }: { decks: Deck[] }) {
             {decks.map((deck) => (
                 <Link
                     key={deck.id}
-                    href={`/${deck.id}/editor/`}
+                    href={`/${encodeId(deck.id)}/editor/`}
                     onClick={() => dispatch(setSelectedDeck(deck))} // Dispatch Redux action
                 >
                     <div className="bg-red-500 p-6 cursor-pointer hover:bg-violet-400">
@@ -22,6 +24,7 @@ export default function ShowDecks({ decks }: { decks: Deck[] }) {
                     </div>
                 </Link>
             ))}
+            <Link href='/createdeck/'><button>Create a new deck</button></Link>
         </div>
     );
 }

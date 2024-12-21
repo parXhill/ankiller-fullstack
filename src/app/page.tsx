@@ -1,6 +1,5 @@
 'use server';
 
-import AppCard from './lib/AppCard';
 import AppCardSkeleton from './ui/skeletons/AppCardSkeleton';
 import { Suspense } from 'react';
 import { getCardsFromUsersDeck, createDeck, getDecksFromUserId } from "./lib/actions";
@@ -29,13 +28,12 @@ export default async function Home() {
   return (
     <div>
       <Suspense fallback={<AppCardSkeleton/>}>
-        <ShowDecks decks={decks}/>
-        <CreateDeckCard createDeck={createDeck} userId={userId}/>
+        
+
+        { userId === 'None' ? <></> :<ShowDecks decks={decks}/>}
       </Suspense>
       
-      {/* <Suspense fallback={<AppCardSkeleton/>}>
-        <AppCard cards={cards} />
-      </Suspense> */}
+ 
     </div>
   );
 };

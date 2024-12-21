@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
-import { Card, Deck, User, Prisma } from '@prisma/client';
+import { Card, Deck, User } from '@prisma/client';
 import { CardToSend } from '@/store/promptSlice';
 
 
@@ -58,35 +58,6 @@ export async function deleteDataByKeyword(id: number) {
   }
 }
 
-// export async function createCard(cardItem: Card) {
-//   try {
-//     // Adjust the cardItem structure to match Prisma's expectations
-//     const entry = await prisma.card.create({
-//       data: {
-//         deckId: cardItem.deckId, // Use the deck's id
-//         keyword: cardItem.keyword,
-//         exemplar: cardItem.exemplar,
-//         keywordTranslation: cardItem.keywordTranslation,
-//         exemplarTranslation: cardItem.exemplarTranslation,
-//         targetLanguage: cardItem.targetLanguage,
-//         lemmas: cardItem.lemmas,
-//         dependencies: cardItem.dependencies,
-//         aiGenerated: cardItem.aiGenerated,
-//         aiModel: cardItem.aiModel,
-//         languageLevel: cardItem.languageLevel,
-//         numberOfKeywords: cardItem.numberOfKeywords,
-//         exemplarSentenceLength: cardItem.exemplarSentenceLength,
-//         keywordSignificance: cardItem.keywordSignificance,
-//         keywordGrammarFormat: cardItem.keywordGrammarFormat,
-//         partOfSpeech: cardItem.partOfSpeech,
-//       },
-//     });
-
-//     console.log("Entry created on the server:", entry);
-//     return entry;
-//   } catch (error) {
-//     console.log("Error creating entry:", error);
-//   }};
 
 export async function createCards(cards: CardToSend[]) {
   console.log("Cards to process:", cards);
@@ -141,8 +112,6 @@ export async function createDeck(userId: string, deckTitle: string) {
 };
 
 
-//test to find username from card
-
 export async function getUserNameFromCard(cardId: number): Promise<string | null> {
   const card = await prisma.card.findUnique({
     where: {
@@ -162,15 +131,7 @@ export async function getUserNameFromCard(cardId: number): Promise<string | null
   return card?.deck?.user?.name || null;
 }
 
-export async function getAllUsers(): Promise<User[]> {
-  try {
-    const data = await prisma.user.findMany();
-    return data;
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Failed to fetch data');
-  }
-}
+
 
 export async function getUserIdFromEmail(email: string): Promise<string | null> {
   const user = await prisma.user.findUnique({

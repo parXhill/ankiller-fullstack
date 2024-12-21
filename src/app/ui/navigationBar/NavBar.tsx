@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react"
 import { signOut } from "next-auth/react"
 import { useSession } from "next-auth/react"
+import Link from "next/link";
 
 
 // Define the session type properly, allowing null
@@ -47,8 +48,8 @@ export default function NavigationBar(
 
   // Default case for logged-in user
   return (
-    <nav className="bg-gray-800 text-white h-20 w-full flex items-center px-8">
-      <div className="flex-1 text-xl font-bold">Ankiller</div>
+    <nav className="bg-gray-800 text-white h-20 w-full flex items-center justify-between px-8">
+      <Link href='/'><div className="flex-1 text-xl font-bold cursor-pointer">Ankiller</div></Link>
       <div className="p-5">{session.user?.name || "User"}</div>
       <div>
         <button

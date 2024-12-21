@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { User } from '@prisma/client';
+import { useRouter } from "next/navigation";
+
 
 export default function CreateDeckCard({
   createDeck,
@@ -11,6 +11,9 @@ export default function CreateDeckCard({
   createDeck: (userId: string, deckName: string) => void;
   userId: string;
 })  {
+
+  const router = useRouter();
+
   const [deckName, setDeckName] = useState('');
 
   const handleCreateDeck = () => {
@@ -19,9 +22,10 @@ export default function CreateDeckCard({
       alert('Please enter a valid deck name');
       return;
     }
-
     createDeck(userId, deckName); // Call createDeck with user ID and deck name
+    router.push("/");
     setDeckName(''); // Clear the deck name input
+
   };
 
   return (
