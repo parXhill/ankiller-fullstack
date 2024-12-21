@@ -3,6 +3,8 @@
 import { signIn } from "next-auth/react"
 import { signOut } from "next-auth/react"
 import { useSession } from "next-auth/react"
+import { useRouter }  from "next/navigation"
+
 import Link from "next/link";
 
 
@@ -10,8 +12,9 @@ import Link from "next/link";
 export default function NavigationBar(
 ) {
 
-  const { data: session } = useSession()
+  const router = useRouter();
 
+  const { data: session } = useSession();
 
   // If session is null or undefined
   if (!session) {
@@ -20,7 +23,7 @@ export default function NavigationBar(
         <div className="flex-1 text-xl font-bold">Ankiller</div>
         <div>
           <button
-            onClick={() => signIn()}
+            onClick={() => router.push("/login")}
             className="bg-green-500 px-4 py-2 rounded hover:bg-green-600"
           >
             Sign In

@@ -3,9 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ReduxProvider from "@/store/ReduxProvider";
 import NavigationBar from "./ui/navigationBar/NavBar";
-import { auth } from "auth";
 import { SessionProvider } from "next-auth/react";
-import { Suspense } from "react";
 
 
 const geistSans = Geist({

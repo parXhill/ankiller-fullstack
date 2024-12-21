@@ -1,6 +1,5 @@
 'use server';
 
-import AppCardSkeleton from './ui/skeletons/AppCardSkeleton';
 import { Suspense } from 'react';
 import { getDecksFromUserId } from "./lib/actions";
 import { Deck } from '@prisma/client';
@@ -11,7 +10,6 @@ import { auth } from 'auth';
 
 export default async function Home() {
 
-  
   const session = await auth();
 
   const user = session?.user;
@@ -24,8 +22,7 @@ export default async function Home() {
 
   return (
     <div>
-      <Suspense fallback={<AppCardSkeleton/>}>
-        
+      <Suspense fallback={<div>Loading</div>}>
         { userId === 'None' ? <></> :<ShowDecks decks={decks}/>}
       </Suspense>
       
