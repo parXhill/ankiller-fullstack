@@ -2,9 +2,8 @@
 
 import AppCardSkeleton from './ui/skeletons/AppCardSkeleton';
 import { Suspense } from 'react';
-import { getCardsFromUsersDeck, createDeck, getDecksFromUserId } from "./lib/actions";
-import { Card, Deck } from '@prisma/client';
-import CreateDeckCard from './ui/createCards/CreateDeckCard';
+import { getDecksFromUserId } from "./lib/actions";
+import { Deck } from '@prisma/client';
 import ShowDecks from './ui/showCards/showDecks';
 import { auth } from 'auth';
 
@@ -20,8 +19,6 @@ export default async function Home() {
   const userId = user?.id ?? 'None';
 
   const decks: Deck[] = await getDecksFromUserId(userId);
-
-  const cards: Card[] = await getCardsFromUsersDeck(1, userId);
     
   console.log('decks', decks)
 
@@ -29,7 +26,6 @@ export default async function Home() {
     <div>
       <Suspense fallback={<AppCardSkeleton/>}>
         
-
         { userId === 'None' ? <></> :<ShowDecks decks={decks}/>}
       </Suspense>
       

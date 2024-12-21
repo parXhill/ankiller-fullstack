@@ -2,8 +2,21 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
-import { Card, Deck, User } from '@prisma/client';
+import { Card, Deck } from '@prisma/client';
 import { CardToSend } from '@/store/promptSlice';
+
+
+// Get Functions
+
+export async function getUserIdFromEmail(email: string): Promise<string | null> {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+
+  return user?.id || null;
+}
 
 
 export async function getDecksFromUserId(
@@ -43,37 +56,7 @@ export async function getCardsFromUsersDeck(
   }
 }
 
-export async function deleteDataByKeyword(id: number) {
-  try {
-    const data = await prisma.card.deleteMany({
-      where: {
-        id: id,
-      },
-    });
-    //console.log('data in server:', data);
-    return data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
-  }
-}
-
-
-export async function createCards(cards: CardToSend[]) {
-  console.log("Cards to process:", cards);
-  for (let cardItem of cards) {
-    try {
-      const entry = await prisma.card.create({
-        data: cardItem,
-      });
-      console.log("Entry created on the server:", entry);
-    } catch (error) {
-      console.error("Error creating entry for card:", cardItem, error);
-      // Optional: continue to next card without breaking the loop
-    }
-  }
-}
-
+// Create Functions
 
 
 export async function createUser(userName: string) {
@@ -112,33 +95,36 @@ export async function createDeck(userId: string, deckTitle: string) {
 };
 
 
-export async function getUserNameFromCard(cardId: number): Promise<string | null> {
-  const card = await prisma.card.findUnique({
-    where: {
-      id: cardId, // Use the card ID to look up the card
-    },
-    include: {
-      deck: {
-        include: {
-          user: true, // Include the associated user of the deck
-        },
+export async function createCards(cards: CardToSend[]) {
+  console.log("Cards to process:", cards);
+  for (let cardItem of cards) {
+    try {
+      const entry = await prisma.card.create({
+        data: cardItem,
+      });
+      console.log("Entry created on the server:", entry);
+    } catch (error) {
+      console.error("Error creating entry for card:", cardItem, error);
+      // Optional: continue to next card without breaking the loop
+    };
+  };
+};
+
+// Delete Functions
+
+
+export async function deleteCardById(id: number) {
+  try {
+    const data = await prisma.card.deleteMany({
+      where: {
+        id: id,
       },
-    },
-  });
-
-  // If card or associated user is not found, return null
-  console.log('card:', card?.deck.user.name);
-  return card?.deck?.user?.name || null;
+    });
+    //console.log('data in server:', data);
+    return data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+  }
 }
 
-
-
-export async function getUserIdFromEmail(email: string): Promise<string | null> {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: email,
-    },
-  });
-
-  return user?.id || null;
-}

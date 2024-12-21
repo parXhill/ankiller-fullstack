@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import Link from 'next/link';
 import { get } from 'http';
 import { useState, useEffect } from 'react';
-import { deleteDataByKeyword } from '@/app/lib/actions';
+import { deleteCardById } from '@/app/lib/actions';
 
 // Define the Deck and Card interfaces
 interface Card {
@@ -44,7 +44,7 @@ export default function ShowCards({deck: initialDeck}: any){
 
     // Delete cards from the server
     for (const id of selectedCards) {
-      await deleteDataByKeyword(id); // Assuming this deletes the card on the server
+      await deleteCardById(id); // Assuming this deletes the card on the server
     }
 
     // Clear the selection
