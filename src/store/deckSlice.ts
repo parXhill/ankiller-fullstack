@@ -1,17 +1,36 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { Card } from '@prisma/client';
 
+
+const getInitialSelectedDeck = () => {
+  if (typeof window !== 'undefined') {  // Check if we're in the browser
+    const saved = localStorage.getItem('selectedDeck');
+    return saved ? JSON.parse(saved) : {id: 0};
+  }
+  return {id: 0};
+};
+
 const deckSlice = createSlice({
   name: 'deck',
   initialState: {
-    selectedDeck: {id: 0},
+    selectedDeck: getInitialSelectedDeck(),
     selectedCards: [] as Card[],
     },
   reducers: {
     setSelectedDeck: (state, action) => {
       state.selectedDeck = action.payload;
+      // Save to localStorage when updating
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('selectedDeck', JSON.stringify(action.payload));
+        console.log('selectedDeck has been set to:', action.payload);
+      }
     },
-
+    clearSelectedDeck: (state) => {
+      state.selectedDeck = {id: 0};
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('selectedDeck');
+      }
+    },
     toggleSelectedCards: (state, action) => {
 
       const exists = state.selectedCards.some(card => card.keyword === action.payload.keyword);
@@ -27,6 +46,6 @@ const deckSlice = createSlice({
 }
 }});
 
-export const { setSelectedDeck, toggleSelectedCards, clearSelectedCards } = deckSlice.actions;
+export const { clearSelectedDeck, setSelectedDeck, toggleSelectedCards, clearSelectedCards } = deckSlice.actions;
 
 export default deckSlice.reducer;

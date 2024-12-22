@@ -44,8 +44,18 @@ const dispatch = useDispatch<AppDispatch>();
 const session = useSession();
 
 const [userId, setUserId] = useState('none');
+const [mode, setMode] = useState('basic'); // Set mode 'development', 'basic' or 'advanced'
+const [scrollTrigger, setScrollTrigger] = useState(false);
 
 
+useEffect(() => {
+  if (scrollTrigger) {
+      window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: 'smooth'
+      });
+  }
+}, [scrollTrigger]);
 
 useEffect(() => {
   const email = session.data?.user?.email ?? 'None';
@@ -59,12 +69,16 @@ useEffect(() => {
 
 const selectedDeck = useSelector((state: RootState) => state.deck.selectedDeck);
 
+console.log('selectedDeck', selectedDeck)
+
 const selectedCards = useSelector((state: RootState) => state.deck.selectedCards);
 
-function handleSendCards(){
-  createCards(selectedCards);
-  dispatch(clearSelectedCards());
+async function handleSendCards(){
+  const response = await createCards(selectedCards);
   router.push(`/${encodeId(selectedDeck.id)}/editor/`);
+  dispatch(clearSelectedCards());
+  dispatch(setParsedResponse(null));
+  dispatch(setInputMessage(''));
 }
 
 
@@ -90,7 +104,6 @@ const exemplarSentenceLength = useSelector((state: RootState) => state.prompt.ex
 const keywordGrammarFormat = useSelector((state: RootState) => state.prompt.keywordGrammarFormat);
 const partOfSpeech = useSelector((state: RootState) => state.prompt.partOfSpeech);
 const numberOfKeywords = useSelector((state: RootState) => state.prompt.numberOfKeywords);
-const cardToSend = useSelector((state: RootState) => state.prompt.cardToSend);
 
 
 function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -266,15 +279,27 @@ Given text: ${inputMessage}`;
       dispatch(setParsedResponse(null));
     } finally {
       dispatch(setIsLoading(false));
+      setScrollTrigger(prev => !prev);
     }
   }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full bg-white rounded-lg shadow-md p-6 space-y-4">
-        <h1 className="text-2xl font-bold text-gray-800">AI Response Checker</h1>
+      
+      <div>
+        <button className="bg-red-400 m-2 p-3 font-semibold cursor-pointer hover:bg-red-300 rounded-lg" onClick={() => setMode('advanced')}>Advanced Mode</button>
+        <button className="bg-green-400 m-2 p-3 font-semibold cursor-pointer hover:bg-green-300 rounded-lg" onClick={() => setMode('developer')}>Developer Mode</button>
+        <button className="bg-blue-400 m-2 p-3 font-semibold cursor-pointer hover:bg-blue-300 rounded-lg" onClick={() => setMode('basic')}>Basic Mode</button>
+      </div>
 
-        {/* Model Selector */}
+      <div className="w-full bg-white rounded-lg shadow-md p-6 space-y-4">
+        <h1 className="text-2xl font-bold text-gray-800">Generate Cards From Text </h1>
+
+
+{/* Developer Mode Only Options*/}
+{ mode === 'developer' && (<>
+
+ {/* Model Selector */}
         <p>Select a model</p>
         <select
           value={selectedGroqModel}
@@ -290,18 +315,6 @@ Given text: ${inputMessage}`;
             </option>
           ))}
         </select>
-
-        {/* Input Message */}
-        <p>Source text</p>
-        <div className="w-full flex flex-col space-y-2">
-          {/* Text Area Input */}
-          <textarea
-            value={inputMessage}
-            onChange={(e) => dispatch(setInputMessage(e.target.value))}
-            placeholder="Input source text here..."
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows={5} // Adjust the number of rows as needed
-          />
 
         {/* Dropdown for Sample Texts */}
         <select
@@ -324,8 +337,43 @@ Given text: ${inputMessage}`;
             </option>
           ))}
         </select>
-        </div>
+       
 
+       </> )} {/* End of Developer Mode Options */}
+
+
+
+        {/* Input Message */}
+        <p>Source text</p>
+        <div className="w-full flex flex-col space-y-2">
+          {/* Text Area Input */}
+          <textarea
+            value={inputMessage}
+            onChange={(e) => dispatch(setInputMessage(e.target.value))}
+            placeholder="Input source text here..."
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={5} // Adjust the number of rows as needed
+          />
+
+              {/* Number of Keywords */}
+              <p>Number of Keywords</p>
+          <select
+            value={numberOfKeywords}
+            onChange={(e) => dispatch(setNumberOfKeywords(Number(e.target.value)))}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="" disabled>
+              Select number of keywords
+            </option>
+            {[...Array(10)].map((_, index) => (
+              <option key={index + 1} value={index + 1}>
+                {index + 1}
+              </option>
+            ))}
+          </select>
+
+        
+      {/* Advanced Mode Only Options*/}
+{ (mode === 'advanced' || mode === 'developer') && (<>
         {/* Target Language */}
         <p>Target Language</p>
         <input
@@ -366,22 +414,6 @@ Given text: ${inputMessage}`;
             {Object.entries(significanceSettings).map(([key, description]) => (
               <option key={key} value={description}>
                 {key}
-              </option>
-            ))}
-          </select>
-
-        {/* Number of Keywords */}
-          <p>Number of Keywords</p>
-          <select
-            value={numberOfKeywords}
-            onChange={(e) => dispatch(setNumberOfKeywords(Number(e.target.value)))}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="" disabled>
-              Select number of keywords
-            </option>
-            {[...Array(10)].map((_, index) => (
-              <option key={index + 1} value={index + 1}>
-                {index + 1}
               </option>
             ))}
           </select>
@@ -438,6 +470,14 @@ Given text: ${inputMessage}`;
           ))}
         </select>
 
+        </> )} {/* End of Advanced Mode Options */}
+
+
+
+
+
+
+
         {/* Submit Button */}
         <button
           onClick={
@@ -445,11 +485,11 @@ Given text: ${inputMessage}`;
             console.log('Full Message at Groq send', fullMessage);
           }
         } // Replace with your fetch logic
-          className="w-full bg-blue-500 text-white font-semibold py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="w-full bg-blue-500 text-white font-semibold py-2 cursor-pointer rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-300 disabled:cursor-not-allowed"
           disabled={isLoading || !inputMessage.trim()}
         >
           {isLoading ? 'Loading...' : 'Get Results'}
-        </button>
+        </button></div>
 
         {/* Display Parsed Response */}
         {parsedResponse && (
@@ -482,11 +522,19 @@ Given text: ${inputMessage}`;
                 ))}
               </tbody>
             </table>
+            <div className="flex justify-end">
+  <button onClick={handleSendCards}
+    className="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+    Add to Deck
+  </button>
+</div>
           </div>
+
+
+
         )}
       </div>
 
-      <button onClick={handleSendCards}
-        className="mt-4 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Add to Deck</button>
-    </div>
+     
+    </div> 
   );}

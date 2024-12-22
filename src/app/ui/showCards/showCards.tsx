@@ -1,8 +1,6 @@
 'use client'
 
-import { useSelector } from 'react-redux';
 import Link from 'next/link';
-import { get } from 'http';
 import { useState, useEffect } from 'react';
 import { deleteCardById } from '@/app/lib/actions';
 

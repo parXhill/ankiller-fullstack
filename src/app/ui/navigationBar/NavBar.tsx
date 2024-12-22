@@ -3,6 +3,8 @@
 import { signIn } from "next-auth/react"
 import { signOut } from "next-auth/react"
 import { useSession } from "next-auth/react"
+import { clearSelectedDeck } from '@/store/deckSlice';
+import { useDispatch } from 'react-redux';
 
 import Link from "next/link";
 
@@ -11,8 +13,8 @@ import Link from "next/link";
 export default function NavigationBar(
 ) {
 
-
   const { data: session } = useSession();
+  const dispatch = useDispatch();
 
   // If session is null or undefined
   if (!session) {
@@ -45,7 +47,20 @@ export default function NavigationBar(
         <p>You are an admin, welcome!</p>
       </nav>
     );
-  }
+  };
+
+  const handleSignOut = async () => {
+    // Clear Redux state
+    dispatch(clearSelectedDeck())
+    
+    // Clear localStorage
+    localStorage.removeItem('selectedDeck')
+    console.log('selectedDeck has been removed from localStorage')
+    
+    // Sign out
+    await signOut()
+}
+
 
   // Default case for logged-in user
   return (
@@ -54,7 +69,7 @@ export default function NavigationBar(
       <div className="p-5">{session.user?.name || "User"}</div>
       <div>
         <button
-          onClick={() => signOut()}
+          onClick={handleSignOut}
           className="bg-red-500 px-4 py-2 rounded hover:bg-red-600"
         >
           Sign Out

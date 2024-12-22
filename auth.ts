@@ -8,4 +8,13 @@ import { prisma } from "@/app/lib/prisma";
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
     providers: [Google],
+    callbacks: {
+        async redirect({ baseUrl }) {
+            // Always redirect to homepage
+            return baseUrl
+            
+            // Or to a specific route
+            // return `${baseUrl}/dashboard`
+        }
+    },
 });
