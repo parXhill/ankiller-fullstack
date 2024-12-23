@@ -38,7 +38,7 @@ export default function RootLayout({
        <ReduxProvider>
        <SessionProvider>
           <NavigationBar />
-          <main>{children}</main>
+          <main className="bg-slate-300 h-screen">{children}</main>
        </SessionProvider>
         </ReduxProvider>
       </body>

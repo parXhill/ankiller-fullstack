@@ -48,6 +48,39 @@ export async function getDecksFromUserId(
   }
 }
 
+// export async function getDeckTitleFromDeckId(deckId: number): Promise<any> {
+//   try {
+//     const data = await prisma.deck.findUnique({
+//       where: {
+//         id: deckId,
+//       },
+//     });
+//     return data?.title
+//   } catch (error) {
+//     console.error('Error fetching data:', error);
+//     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+//   }
+// }
+
+export async function getDeckFromDeckId(deckId: number): Promise<Deck> {
+  try {
+    const data = await prisma.deck.findUnique({
+      where: {
+        id: deckId,
+      },
+    });
+
+    if (data === null) {
+      throw new Error("Deck not found");
+    }
+
+    return data;
+    
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw new Error("Failed to fetch data");
+  }
+}
 
 export async function getCardsFromUsersDeck(
   deckId: number,
@@ -132,7 +165,6 @@ export async function deleteCardById(id: number) {
         id: id,
       },
     });
-    //console.log('data in server:', data);
     return data;
   } catch (error) {
     console.error('Error fetching data:', error);

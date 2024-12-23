@@ -18,8 +18,6 @@ export default async function Home() {
 
   const decks: Deck[] = await getDecksFromUserId(userId);
     
-  console.log('decks', decks)
-
   return (
     <div>
       <Suspense fallback={<div>Loading</div>}>

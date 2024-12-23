@@ -69,7 +69,6 @@ useEffect(() => {
 
 const selectedDeck = useSelector((state: RootState) => state.deck.selectedDeck);
 
-console.log('selectedDeck', selectedDeck)
 
 const selectedCards = useSelector((state: RootState) => state.deck.selectedCards);
 
@@ -116,7 +115,6 @@ function handleCheckboxChange(e: React.ChangeEvent<HTMLInputElement>) {
     dispatch(toggleSelectedCards(parsedResponse.keywords[parseInt(index)]));
 }
 
-console.log('selectedCards', selectedCards)
 
 
 const significanceSettings = {
@@ -240,7 +238,6 @@ Given text: ${inputMessage}`;
       }
 
       const jsonObject: ParsedResponse = JSON.parse(jsonString);
-      console.log('Parsed Response:', jsonObject);
 
       let generatedCardsArray: CardToSend[] = [];
 
@@ -482,7 +479,6 @@ Given text: ${inputMessage}`;
         <button
           onClick={
             () => {getGroqChatCompletion();
-            console.log('Full Message at Groq send', fullMessage);
           }
         } // Replace with your fetch logic
           className="w-full bg-blue-500 text-white font-semibold py-2 cursor-pointer rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-300 disabled:cursor-not-allowed"

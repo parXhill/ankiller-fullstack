@@ -39,15 +39,6 @@ export default function NavigationBar(
     );
   }
 
-  // Check if user is an admin
-  if (session.user?.name === "admin") {
-    return (
-      <nav className="bg-gray-800 text-white h-20 w-full flex items-center px-8">
-        <div className="flex-1 text-xl font-bold">Ankiller</div>
-        <p>You are an admin, welcome!</p>
-      </nav>
-    );
-  };
 
   const handleSignOut = async () => {
     // Clear Redux state
@@ -55,7 +46,6 @@ export default function NavigationBar(
     
     // Clear localStorage
     localStorage.removeItem('selectedDeck')
-    console.log('selectedDeck has been removed from localStorage')
     
     // Sign out
     await signOut()
@@ -65,7 +55,7 @@ export default function NavigationBar(
   // Default case for logged-in user
   return (
     <nav className="bg-gray-800 text-white h-20 w-full flex items-center justify-between px-8">
-      <Link href='/'><div className="flex-1 text-xl font-bold cursor-pointer">Ankiller</div></Link>
+      <Link href='/'><div tabIndex={0} className="flex-1 text-xl font-bold cursor-pointer hover:scale-125 transition-all duration-300 ease-in-out">Ankiller</div></Link>
       <div className="p-5">{session.user?.name || "User"}</div>
       <div>
         <button

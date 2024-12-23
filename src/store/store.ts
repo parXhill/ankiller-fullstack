@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import promptReducer from './promptSlice'; // Import the counter slice
-import deckReducer from './deckSlice'; // Import the counter slice
+import promptReducer from './promptSlice';
+import deckReducer from './deckSlice'; 
+import reviewReducer from './reviewSlice'; 
 
 export const store = configureStore({
   reducer: {
     prompt: promptReducer,
-    deck: deckReducer // Add the counter reducer here
+    deck: deckReducer,
+    review: reviewReducer,
   },
 });
 

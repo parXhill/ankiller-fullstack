@@ -22,7 +22,6 @@ const deckSlice = createSlice({
       // Save to localStorage when updating
       if (typeof window !== 'undefined') {
         localStorage.setItem('selectedDeck', JSON.stringify(action.payload));
-        console.log('selectedDeck has been set to:', action.payload);
       }
     },
     clearSelectedDeck: (state) => {

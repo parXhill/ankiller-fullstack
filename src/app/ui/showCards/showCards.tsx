@@ -20,8 +20,7 @@ interface Deck {
 }
 
 
-export default function ShowCards({deck: initialDeck}: any){
-
+export default function ShowCards({deck: initialDeck, deckTitle}: any){
 
   const [deck, setDeck] = useState<Card[]>(initialDeck);
   const [selectedCards, setSelectedCards] = useState<number[]>([]);
@@ -50,15 +49,15 @@ export default function ShowCards({deck: initialDeck}: any){
   };
 
   useEffect(() => {
-    console.log('Selected Cards:', selectedCards);
   }, [selectedCards]);
 
+
     return (<div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-6">{initialDeck.title} Deck</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">{deckTitle}</h1>
       <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-gray-300 shadow-md">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-slate-800 text-white">
               
               <th className="border border-gray-300 px-4 py-2 text-left">Keyword</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Translation</th>
@@ -69,7 +68,7 @@ export default function ShowCards({deck: initialDeck}: any){
           </thead>
           <tbody>
             {deck.map((card: Card) => (
-              <tr key={card.id} className="even:bg-gray-50">
+              <tr key={card.id} className="even:bg-gray-50 odd:bg-gray-200">
                 
                 <td className="border border-gray-300 px-4 py-2">{card.keyword}</td>
                 <td className="border border-gray-300 px-4 py-2">{card.keywordTranslation}</td>
