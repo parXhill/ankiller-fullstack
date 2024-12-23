@@ -4,9 +4,10 @@ import { RootState } from '@/store/store';
 import { useState, useEffect } from 'react';
 import { Card } from '@prisma/client';
 import { useDispatch, useSelector } from 'react-redux';
-import { setScore, setTotalCards } from '@/store/reviewSlice';
+import { setScore, setTotalCards, resetReview } from '@/store/reviewSlice';
 import { ReviewCard, prepareReviewSession } from '@/app/lib/flashcardLogic';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import StatisticsGraph from './StatisticsGraph';
 
 interface ReviewAppProps {
@@ -22,6 +23,8 @@ const ReviewApp: React.FC<ReviewAppProps> = ({ cards }) => {
     const completedCards = useSelector((state: RootState) => state.review.completedCards);
     const totalCards = useSelector((state: RootState) => state.review.totalCards);
     const fullReviewState = useSelector((state: RootState) => state.review);
+
+    const router = useRouter();
 
     console.log('fullReviewState', fullReviewState);
 
@@ -50,8 +53,22 @@ const ReviewApp: React.FC<ReviewAppProps> = ({ cards }) => {
         setCurrentCardIndex(prev => prev + 1);
     };
 
+    const handleReturnToDeck = async () => {
+        router.push('/');
+        setTimeout(() => dispatch(resetReview()), 1000);
+        
+    }
+
     if (currentCardIndex >= reviewCards.length) {
-        return <StatisticsGraph />;
+        return (<>
+        {/* <div className="flex flex-col items-center justify-center min-w-[60vw]"> */}
+        <StatisticsGraph />
+        <div className="flex flex-col items-center justify-center min-w-[60vw]">
+        <button onClick={handleReturnToDeck} className="text-center px-6 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors">Return to Decks</button>
+        </div>
+        </>)
+        
+        
     }
     const currentCard = reviewCards[currentCardIndex];
 
