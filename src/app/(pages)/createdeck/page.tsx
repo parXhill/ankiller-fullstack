@@ -14,7 +14,6 @@ export default async function CreateDeckPage() {
 
     return (
         <>
-        <p>Create Deck</p>
         <CreateDeckCard createDeck={createDeck} userId={userId}/>
         </>
     );

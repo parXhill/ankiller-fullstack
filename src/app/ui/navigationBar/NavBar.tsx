@@ -5,8 +5,10 @@ import { signOut } from "next-auth/react"
 import { useSession } from "next-auth/react"
 import { clearSelectedDeck } from '@/store/deckSlice';
 import { useDispatch } from 'react-redux';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { set } from "zod";
 
-import Link from "next/link";
 
 
 // Define the session type properly, allowing null
@@ -15,6 +17,8 @@ export default function NavigationBar(
 
   const { data: session } = useSession();
   const dispatch = useDispatch();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   // If session is null or undefined
   if (!session) {
@@ -40,6 +44,13 @@ export default function NavigationBar(
   }
 
 
+  const handleTitleClick = async () => { 
+    setLoading(true);
+    setTimeout(() => {setLoading(false)}, 2000);
+    router.push('/')
+  }
+
+
   const handleSignOut = async () => {
     // Clear Redux state
     dispatch(clearSelectedDeck())
@@ -55,7 +66,15 @@ export default function NavigationBar(
   // Default case for logged-in user
   return (
     <nav className="bg-gray-800 text-white h-20 w-full flex items-center justify-between px-8">
-      <Link href='/'><div tabIndex={0} className="flex-1 text-xl font-bold cursor-pointer hover:scale-125 transition-all duration-300 ease-in-out">Ankiller</div></Link>
+
+      { loading ? 
+      
+      // Loading Spinner
+        <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin">
+      </div> : (
+
+      <div onClick={handleTitleClick} className="text-xl font-bold cursor-pointer hover:scale-125 transition-all duration-300 ease-in-out">Ankiller</div>
+      )}
       <div className="p-5">{session.user?.name || "User"}</div>
       <div>
         <button

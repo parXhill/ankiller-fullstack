@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ReduxProvider from "@/store/ReduxProvider";
 import NavigationBar from "./ui/navigationBar/NavBar";
+import LowerNavigationBar from "./ui/navigationBar/LowerNavBar";
 import { SessionProvider } from "next-auth/react";
 
 
@@ -29,19 +30,41 @@ export default function RootLayout({
 }>) {
 
 
+const Layout = ({ children }: { children: React.ReactNode }) => {
+    return (
+      <div className="min-h-screen flex flex-col">
+        {/* Fixed top nav */}
+        <nav className="fixed top-0 left-0 right-0 h-16 z-50 bg-white">
+          <NavigationBar />
+        </nav>
+  
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto bg-slate-300
+          mt-16 mb-16"> {/* mt/mb should match nav heights */}
+          {children}
+        </main>
+  
+        {/* Fixed bottom nav */}
+        <nav className="fixed bottom-0 left-0 right-0 h-16 z-50 bg-white">
+          <LowerNavigationBar />
+        </nav>
+      </div>
+    );
+};
+
+
 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-       <ReduxProvider>
-       <SessionProvider>
-          <NavigationBar />
-          <main className="bg-slate-300 h-screen">{children}</main>
-       </SessionProvider>
-        </ReduxProvider>
-      </body>
-    </html>
+    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <ReduxProvider>
+        <SessionProvider>
+          <Layout>
+            {children}
+          </Layout>
+        </SessionProvider>
+      </ReduxProvider>
+    </body>
+  </html>
   );
 }

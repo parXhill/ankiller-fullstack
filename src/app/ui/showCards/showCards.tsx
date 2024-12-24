@@ -53,7 +53,7 @@ export default function ShowCards({deck: initialDeck, deckTitle}: any){
 
 
     return (<div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-6">{deckTitle}</h1>
+      <h1 className="text-3xl font-bold text-center my-8">{deckTitle}</h1>
       <div className="overflow-x-auto">
         <table className="table-auto w-full border-collapse border border-gray-300 shadow-md">
           <thead>
@@ -90,8 +90,12 @@ export default function ShowCards({deck: initialDeck, deckTitle}: any){
       <Link href="/aigeneration">
       <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Generate AI Cards</button>
       </Link>
+
+      <Link href="/">
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Add Cards (Beta)</button>
+      </Link>
       
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" onClick={handleDeleteClick}>Delete Selected Cards</button>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" onClick={handleDeleteClick}>Delete Cards</button>
       </div>
     </div>)
 };

@@ -101,6 +101,21 @@ export async function getCardsFromUsersDeck(
   }
 }
 
+export async function getAllCardsFromUser(userId: string): Promise<Card[]> {
+  try {
+    const data = await prisma.card.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching cards:", error);
+    throw new Error("Failed to fetch data");
+  }
+}
+
 // Create Functions
 
 

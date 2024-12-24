@@ -9,6 +9,7 @@ import { ReviewCard, prepareReviewSession } from '@/app/lib/flashcardLogic';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import StatisticsGraph from './StatisticsGraph';
+import { set } from 'zod';
 
 interface ReviewAppProps {
     cards: Card[];
@@ -19,6 +20,7 @@ const ReviewApp: React.FC<ReviewAppProps> = ({ cards }) => {
     const [reviewCards, setReviewCards] = useState<ReviewCard[]>([]);
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
+    const [loading, setLoading] = useState(false);
     
     const completedCards = useSelector((state: RootState) => state.review.completedCards);
     const totalCards = useSelector((state: RootState) => state.review.totalCards);
@@ -54,8 +56,10 @@ const ReviewApp: React.FC<ReviewAppProps> = ({ cards }) => {
     };
 
     const handleReturnToDeck = async () => {
+
+        setLoading(true);
+        dispatch(resetReview());
         router.push('/');
-        setTimeout(() => dispatch(resetReview()), 1000);
         
     }
 
@@ -64,7 +68,14 @@ const ReviewApp: React.FC<ReviewAppProps> = ({ cards }) => {
         {/* <div className="flex flex-col items-center justify-center min-w-[60vw]"> */}
         <StatisticsGraph />
         <div className="flex flex-col items-center justify-center min-w-[60vw]">
-        <button onClick={handleReturnToDeck} className="text-center px-6 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors">Return to Decks</button>
+            { loading ?  
+            
+            <div className="w-24 h-24 border-8 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+            : 
+
+            <button onClick={handleReturnToDeck} className="text-center px-6 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors">Return to Decks</button>
+            
+            }
         </div>
         </>)
         
