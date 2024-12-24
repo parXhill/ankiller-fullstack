@@ -9,13 +9,13 @@ import { ReviewCard, prepareReviewSession } from '@/app/lib/flashcardLogic';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import StatisticsGraph from './StatisticsGraph';
-import { set } from 'zod';
 
 interface ReviewAppProps {
     cards: Card[];
 }
 
 const ReviewApp: React.FC<ReviewAppProps> = ({ cards }) => {
+
     const dispatch = useDispatch();
     const [reviewCards, setReviewCards] = useState<ReviewCard[]>([]);
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -27,15 +27,22 @@ const ReviewApp: React.FC<ReviewAppProps> = ({ cards }) => {
     const fullReviewState = useSelector((state: RootState) => state.review);
 
     const router = useRouter();
+    const selectedDeck = useSelector((state: RootState) => state.deck.selectedDeck);
 
     console.log('fullReviewState', fullReviewState);
 
     useEffect(() => {
         const initializeReview = async () => {
+
+            if (cards.length === 0) {
+                cards = selectedDeck;
+            }
+
             const prepared = await prepareReviewSession(cards);
             setReviewCards(prepared);
             dispatch(setTotalCards(cards.length));
         };
+        
         initializeReview();
     }, [cards, dispatch]);
 

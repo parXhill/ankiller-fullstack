@@ -2,6 +2,13 @@ import { getAllCardsFromUser } from "@/app/lib/actions";
 import { auth } from 'auth';
 import { Suspense } from "react";
 import CreateDeckMix from "@/app/ui/createCards/CreateMix";
+import { Card } from "@prisma/client";
+
+type CardWithDeck = Card & {
+    deck: {
+      title: string;
+    };
+  };
 
 export default async function MixPage() {
 

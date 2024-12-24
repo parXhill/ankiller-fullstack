@@ -4,15 +4,25 @@ import { useState, useEffect } from 'react';
 import { Card } from '@prisma/client';
 import { ChevronDownIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { Deck } from '@prisma/client';
+import { useDispatch } from 'react-redux';
+import { setSelectedDeck } from '@/store/deckSlice';
+import { useRouter } from 'next/navigation';
+
+type CardWithDeck = Card & {
+    deck: {
+      title: string;
+    };
+  };
 
 
 interface MixerProps {
-    cards: Card[];
+    cards: CardWithDeck[];
 }
 
 interface DeckSelection {
     deckId: number | null;
     percentage: number;
+    title: string | null;
 }
 
 
@@ -20,10 +30,13 @@ interface DeckSelection {
 
 const CreateDeckMix: React.FC<MixerProps> = ({ cards }) => {
 
+    const dispatch = useDispatch();
+    const router = useRouter();
+
     const [totalCards, setTotalCards] = useState<number>(10);
     const [deckSelections, setDeckSelections] = useState<DeckSelection[]>([
-        { deckId: null, percentage: 50 },
-        { deckId: null, percentage: 50 },
+        { deckId: null, title: null, percentage: 50 },
+        { deckId: null, title: null, percentage: 50 },
     ]);
     const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
     const [isCreating, setIsCreating] = useState(false);
@@ -31,7 +44,7 @@ const CreateDeckMix: React.FC<MixerProps> = ({ cards }) => {
     const availableDecks = Array.from(new Set(cards.map(card => card.deckId)))
         .map(deckId => ({
             id: deckId,
-            title: `Deck ${deckId}`,
+            title: cards.find(card => card.deckId === deckId)?.deck.title || `Deck ${deckId}`,
             cardCount: cards.filter(card => card.deckId === deckId).length
         }));
 
@@ -49,13 +62,14 @@ const CreateDeckMix: React.FC<MixerProps> = ({ cards }) => {
         }));
         
         // Add new slot
-        newSelections.push({ deckId: null, percentage: newPercentage + remainder });
+        newSelections.push({ deckId: null, title: null, percentage: newPercentage + remainder });
         setDeckSelections(newSelections);
     };
 
-    const handleDeckSelect = (index: number, deckId: number) => {
+    const handleDeckSelect = (index: number, deckId: number, title: string) => {
         const newSelections = [...deckSelections];
         newSelections[index].deckId = deckId;
+        newSelections[index].title = title;
         setDeckSelections(newSelections);
         setActiveDropdown(null);
     };
@@ -134,6 +148,10 @@ const CreateDeckMix: React.FC<MixerProps> = ({ cards }) => {
             console.log('Created mixed deck:', mixedDeck);
             console.log('Total cards:', mixedDeck.length);
             console.log('Distribution:', deckCardCounts);
+
+            dispatch(setSelectedDeck(mixedDeck));
+            router.push('/deckmix/review');
+            
     
             // Here you would typically save this to your database
             // await saveMixedDeck(mixedDeck);
@@ -190,7 +208,7 @@ const CreateDeckMix: React.FC<MixerProps> = ({ cards }) => {
                                 >
                                     <span>
                                         {selection.deckId 
-                                            ? `Deck ${selection.deckId}`
+                                            ? `${selection.title}`
                                             : 'Select a deck'}
                                     </span>
                                     <ChevronDownIcon className="w-5 h-5" />
@@ -203,11 +221,11 @@ const CreateDeckMix: React.FC<MixerProps> = ({ cards }) => {
                                             .map(deck => (
                                                 <button
                                                     key={deck.id}
-                                                    onClick={() => handleDeckSelect(index, deck.id)}
+                                                    onClick={() => handleDeckSelect(index, deck.id, deck.title)}
                                                     className="w-full px-4 py-2 text-left hover:bg-blue-50 first:rounded-t-lg last:rounded-b-lg"
                                                 >
                                                     <div className="flex justify-between items-center">
-                                                        <span>Deck {deck.id}</span>
+                                                        <span>{deck.title}</span>
                                                         <span className="text-sm text-gray-500">
                                                             {deck.cardCount} cards
                                                         </span>
